@@ -7,6 +7,7 @@ import config from "config";
 import express from "express";
 import morgan from "morgan";
 import { logger, stream } from "./utils/logger";
+import errorMiddleware from "./middlewares/errorMiddleware";
 
 const LOG_FORMAT = config.get<string>("LOG_FORMAT");
 class App {
@@ -18,6 +19,7 @@ class App {
     this.port = config.get<number>("PORT");
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
+    this.initializeErrorMiddleWare();
   }
   public listen = () => {
     this.app.listen(this.port, () => {
@@ -40,9 +42,12 @@ class App {
 
   private initializeRoutes(routes: Routes[]) {
     routes.forEach((route) => {
-      this.app.use("/", route.router);
+      this.app.use("/api/v1", route.router);
     });
   }
+  private initializeErrorMiddleWare = () => {
+    this.app.use(errorMiddleware);
+  };
 }
 
 export default App;
