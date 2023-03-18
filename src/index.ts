@@ -42,7 +42,7 @@ class App {
 
   private initializeRoutes(routes: Routes[]) {
     routes.forEach((route) => {
-      this.app.use("/api/v1", route.router);
+      this.app.use("/api/v1/", route.router);
     });
   }
   private initializeErrorMiddleWare = () => {
