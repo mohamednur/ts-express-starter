@@ -1,7 +1,9 @@
-import { createuserDTO, updateUserDTO } from "./../schema/user.schema";
+import { CreateUserInput } from "./../schema/user.schema";
 import { PrismaClient, User } from "@prisma/client";
 import HttpExceptions from "../exceptions/httpExecptions";
-import { Hash } from "crypto";
+import bcrypt from "bcrypt";
+import sendMail from "../utils/mailer";
+import crypto from "crypto";
 
 class UserService {
   public users = new PrismaClient().user;
@@ -24,7 +26,7 @@ class UserService {
   };
 
   public createUser = async (
-    userData: createuserDTO["body"]
+    userData: Omit<CreateUserInput, "confirmPassword">
   ): Promise<User> => {
     const findUser: User | null = await this.users.findUnique({
       where: {
@@ -34,32 +36,33 @@ class UserService {
     if (findUser)
       throw new HttpExceptions(
         409,
-        `This email ${userData.email} alreaddy exists`
+        `This email ${userData.email} already exists`
       );
 
-    // use bycrypt to hash password
+    const verificationCode = crypto.randomBytes(5).toString("hex");
+    console.log(verificationCode);
 
     const createUserData: User = await this.users.create({
-      data: { ...userData },
+      data: { ...userData, verificationCode },
     });
 
     return createUserData;
   };
 
-  public updateUser = async (
-    userId: string,
-    userData: updateUserDTO["body"]
-  ): Promise<User> => {
-    const findUser: User | null = await this.users.findUnique({
-      where: { id: userId },
-    });
-    if (!findUser) throw new HttpExceptions(409, "User doesn't exist");
-    const updateUserData = await this.users.update({
-      where: { id: userId },
-      data: { ...userData },
-    });
-    return updateUserData;
-  };
+  // public updateUser = async (
+  //   userId: string,
+  //   userData: updateUserDTO["body"]
+  // ): Promise<User> => {
+  //   const findUser: User | null = await this.users.findUnique({
+  //     where: { id: userId },
+  //   });
+  //   if (!findUser) throw new HttpExceptions(409, "User doesn't exist");
+  //   const updateUserData = await this.users.update({
+  //     where: { id: userId },
+  //     data: { ...userData },
+  //   });
+  //   return updateUserData;
+  // };
 
   public deleteUser = async (userId: string): Promise<User> => {
     const findUser: User | null = await this.users.findUnique({

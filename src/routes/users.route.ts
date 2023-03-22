@@ -1,4 +1,4 @@
-import { PartialUserSchema, userSchema } from "./../schema/user.schema";
+import { createUserSchema } from "./../schema/user.schema";
 import { validate } from "./../middlewares/validate";
 import { Router } from "express";
 import UsersControllers from "../controllers/users.controller";
@@ -18,19 +18,19 @@ class UsersRoute implements Routes {
     this.router.get(`${this.path}/:id`, this.userController.getUserById);
     this.router.post(
       `${this.path}`,
-      validate(userSchema),
+      validate(createUserSchema),
       this.userController.createUser
     );
-    this.router.put(
-      `${this.path}/:id`,
-      validate(PartialUserSchema),
-      this.userController.updateUser
-    );
-    this.router.delete(
-      `${this.path}/:id`,
-      validate(PartialUserSchema),
-      this.userController.deleteUser
-    );
+    // this.router.put(
+    //   `${this.path}/:id`,
+    //   validate(PartialUserSchema),
+    //   this.userController.updateUser
+    // );
+    // this.router.delete(
+    //   `${this.path}/:id`,
+    //   validate(PartialUserSchema),
+    //   this.userController.deleteUser
+    // );
   };
 
   // this.router.get(
