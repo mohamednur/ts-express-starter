@@ -1,23 +1,28 @@
+import { type } from "os";
 import { z } from "zod";
 
+const commonUserSchema = {
+  email: z
+    .string({
+      required_error: "email is required",
+    })
+    .email(),
+  firstname: z.string({
+    required_error: "first name is required",
+  }),
+  lastname: z.string({
+    required_error: "last name is required",
+  }),
+  phonenumber: z.number({
+    required_error: "mobile number is required",
+  }),
+  password: z.string(),
+  role: z.enum(["ADMIN", "USER"]).optional(),
+};
 export const createUserSchema = z.object({
   body: z
     .object({
-      email: z
-        .string({
-          required_error: "email is required",
-        })
-        .email(),
-      firstName: z.string({
-        required_error: "first name is required",
-      }),
-      lastName: z.string({
-        required_error: "last name is required",
-      }),
-      mobileNo: z.number({
-        required_error: "mobile number is required",
-      }),
-      password: z.string(),
+      ...commonUserSchema,
       confirmPassword: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
@@ -26,14 +31,18 @@ export const createUserSchema = z.object({
     }),
 });
 
-// const userWithId = userSchema.merge(HasId);
+export const updateUserSchema = z.object({
+  body: z
+    .object({
+      ...commonUserSchema,
+    })
+    .partial(),
 
-// export type User = z.infer<typeof userWithId>;
-
-// export type createuserDTO = z.infer<typeof userSchema>["body"];
-
-// export type UserId = z.infer<typeof HasId>;
-// export const PartialUserSchema = userSchema.deepPartial();
-// export type updateUserDTO = z.infer<typeof PartialUserSchema>["body"];
+  params: z.object({
+    id: z.string(),
+  }),
+});
 
 export type CreateUserInput = z.infer<typeof createUserSchema>["body"];
+export type UserUpdateInput = z.infer<typeof updateUserSchema>["body"];
+export type UserUpdateParam = z.infer<typeof updateUserSchema>["params"];

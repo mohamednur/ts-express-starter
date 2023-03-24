@@ -1,4 +1,4 @@
-import { createUserSchema } from "./../schema/user.schema";
+import { createUserSchema, updateUserSchema } from "./../schema/user.schema";
 import { validate } from "./../middlewares/validate";
 import { Router } from "express";
 import UsersControllers from "../controllers/users.controller";
@@ -21,14 +21,14 @@ class UsersRoute implements Routes {
       validate(createUserSchema),
       this.userController.createUser
     );
-    // this.router.put(
-    //   `${this.path}/:id`,
-    //   validate(PartialUserSchema),
-    //   this.userController.updateUser
-    // );
+    this.router.put(
+      `${this.path}/:id`,
+      validate(updateUserSchema),
+      this.userController.updateUser
+    );
     // this.router.delete(
     //   `${this.path}/:id`,
-    //   validate(PartialUserSchema),
+
     //   this.userController.deleteUser
     // );
   };

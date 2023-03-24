@@ -1,4 +1,8 @@
-import { CreateUserInput } from "./../schema/user.schema";
+import {
+  CreateUserInput,
+  UserUpdateInput,
+  UserUpdateParam,
+} from "./../schema/user.schema";
 import { Request, Response, NextFunction } from "express";
 import UserService from "../services/user.service";
 import { User } from "@prisma/client";
@@ -18,7 +22,7 @@ class UsersController {
   };
 
   public getUserById = async (
-    req: Request,
+    req: Request<UserUpdateParam>,
     res: Response,
     next: NextFunction
   ) => {
@@ -50,25 +54,26 @@ class UsersController {
     }
   };
 
-  // public updateUser = async (
-  //   req: Request<{ id: UserId["id"] }, {}, {}>,
-  //   res: Response,
-  //   next: NextFunction
-  // ) => {
-  //   try {
-  //     const userId = req.params.id;
-  //     const userData: updateUserDTO["body"] = req.body;
+  public updateUser = async (
+    req: Request<UserUpdateParam, {}, UserUpdateInput>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const userId = req.params.id;
 
-  //     const updateUserData: User = await this.userService.updateUser(
-  //       userId,
-  //       userData
-  //     );
+      const userData = req.body;
 
-  //     res.status(200).json({ data: updateUserData, message: "updated" });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // };
+      const updateUserData: User = await this.userService.updateUser(
+        userId,
+        userData
+      );
+
+      res.status(200).json({ data: updateUserData, message: "updated" });
+    } catch (error) {
+      next(error);
+    }
+  };
 
   // public deleteUser = async (
   //   req: Request,

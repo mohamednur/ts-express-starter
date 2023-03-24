@@ -14,13 +14,13 @@ model User {
   id                String   @id @default(uuid())
   email             String   @unique
   password          String
-  firstName         String
-  lastName          String
-  mobileNo          Int
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  verificationCode  String
-  passwordResetCode String?
+  firstname         String
+  lastname          String
+  phonenumber       Int
+  createdat         DateTime @default(now())
+  updatedat         DateTime @updatedAt
+  verificationcode  String
+  passwordresetcode String?
   verified          Boolean  @default(false)
   role              Role     @default(USER)
 }
